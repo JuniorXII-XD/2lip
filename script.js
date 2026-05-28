@@ -174,9 +174,9 @@ document.addEventListener('keydown', e => {
     { src: 'photos/photo7.jpg', caption: '🤍' },
     { src: 'photos/photo8.jpg', caption: '❤️' },
     { src: 'photos/photo9.jpg', caption: '🌷' },
-    { src: 'photos/photo10.heic', caption: '❤️' },
-    { src: 'photos/photo11.heic', caption: '🤍' },
-    { src: 'photos/photo12.heic', caption: '🌷' },
+    { src: 'photos/photo10.webp', caption: '❤️' },
+    { src: 'photos/photo11.jpg', caption: '🤍' },
+    { src: 'photos/photo12.jpg', caption: '🌷' },
   ];
   
   const N = PHOTOS.length;
