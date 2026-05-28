@@ -165,19 +165,24 @@ document.addEventListener('keydown', e => {
 /* ── 3D Ellipse Dynamic Photos Carousel (Optimized Version) ── */
 (function() {
   const PHOTOS = [
-    { src: 'photos/photo1.jpg', caption: 'my fav 🌷' },
-    { src: 'photos/photo2.jpg', caption: 'cutie' },
-    { src: 'photos/photo3.jpg', caption: 'babee' },
-    { src: 'photos/photo4.jpg', caption: 'ma gurl l' },
-    { src: 'photos/photo5.jpg', caption: 'uwu' },
-    { src: 'photos/photo6.jpg', caption: 'literally 🌸' },
-    { src: 'photos/photo7.jpg', caption: 'obsessed 💗' },
+    { src: 'photos/photo1.jpg', caption: '' },
+    { src: 'photos/photo2.jpg', caption: '' },
+    { src: 'photos/photo3.jpg', caption: '' },
+    { src: 'photos/photo4.jpg', caption: '' },
+    { src: 'photos/photo5.jpg', caption: '' },
+    { src: 'photos/photo6.jpg', caption: '' },
+    { src: 'photos/photo7.jpg', caption: '' },
+    { src: 'photos/photo8.jpg', caption: '' },
+    { src: 'photos/photo9.jpg', caption: '' },
+    { src: 'photos/photo10.heic', caption: '' },
+    { src: 'photos/photo11.heic', caption: '' },
+    { src: 'photos/photo12.heic', caption: '' },
   ];
   
   const N = PHOTOS.length;
   const scene = document.getElementById('carousel');
   const W = () => scene.offsetWidth;
-  const RX = () => W() * 0.36; 
+  const RX = () => W() * 1; 
   const RY = 70; 
   const CX = () => W() / 2;
   const CY = 170; 
@@ -297,5 +302,3 @@ document.addEventListener('keydown', e => {
   scene.addEventListener('touchmove', onMove, { passive: true });
   scene.addEventListener('touchend', onEnd);
 })();
-
-
