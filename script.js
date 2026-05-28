@@ -182,7 +182,7 @@ document.addEventListener('keydown', e => {
   const N = PHOTOS.length;
   const scene = document.getElementById('carousel');
   const W = () => scene.offsetWidth;
-  const RX = () => W() * 1; 
+  const RX = () => W() * 0.8; 
   const RY = 70; 
   const CX = () => W() / 2;
   const CY = 170; 
