@@ -162,7 +162,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeLightbox(); 
 });
 
-/* ── 3D Ellipse Dynamic Photos Carousel ── */
+/* ── 3D Ellipse Dynamic Photos Carousel (Optimized Version) ── */
 (function() {
   const PHOTOS = [
     { src: 'photos/photo1.jpg', caption: 'my fav 🌷' },
@@ -187,12 +187,14 @@ document.addEventListener('keydown', e => {
   let dragging = false;
   let lastX = 0;
   let lastT = 0;
-  let rafId = null;
+  let isMoving = false; // ตรวจสอบว่ามีการเคลื่อนที่จริงๆ ไหม เพื่อลดการประมวลผลไร้ประโยชน์
 
   // Card Node Injector
   const items = PHOTOS.map((p, i) => {
     const wrap = document.createElement('div');
     wrap.className = 'carousel-item';
+    // บังคับให้การ์ดใช้ GPU ในการเรนเดอร์ 3D ช่วยลดอาการแลค
+    wrap.style.willChange = 'transform, opacity'; 
 
     const pol = document.createElement('div');
     pol.className = 'polaroid';
@@ -201,6 +203,7 @@ document.addEventListener('keydown', e => {
     img.className = 'photo-frame';
     img.src = p.src; 
     img.alt = p.caption;
+    img.loading = 'lazy'; // ช่วยให้โหลดรูปแบบค่อยเป็นค่อยไป ไม่แย่งแรมเครื่อง
 
     const cap = document.createElement('div');
     cap.className = 'caption';
@@ -211,7 +214,7 @@ document.addEventListener('keydown', e => {
     wrap.appendChild(pol);
 
     wrap.addEventListener('click', () => {
-      if (Math.abs(velX) < 0.008) openLightbox(p.src);
+      if (Math.abs(velX) < 0.005) openLightbox(p.src);
     });
 
     scene.appendChild(wrap);
@@ -231,7 +234,8 @@ document.addEventListener('keydown', e => {
       const opacity = 0.35 + depth * 0.65;
       const zIndex = Math.round(depth * 100);
 
-      item.style.transform = `translate(calc(${x}px - 50%), calc(${y}px - 50%)) scale(${scale})`;
+      // ใช้ translate3d แทน translate ปกติ เพื่อเปิดใช้ Hardware Acceleration ของการ์ดจอ
+      item.style.transform = `translate3d(calc(${x}px - 50%), calc(${y}px - 50%), 0) scale(${scale})`;
       item.style.opacity = opacity;
       item.style.zIndex = zIndex;
 
@@ -242,18 +246,25 @@ document.addEventListener('keydown', e => {
   // Physics Loop
   function tick() {
     if (!dragging) {
-      velX *= 0.93;
-      if (Math.abs(velX) < 0.0002) velX = 0;
-      angle += velX;
+      velX *= 0.92; // ปรับแรงเฉื่อยให้หยุดนุ่มนวลขึ้น
+      if (Math.abs(velX) < 0.0001) {
+        velX = 0;
+        isMoving = false;
+      }
     }
-    place();
-    rafId = requestAnimationFrame(tick);
+    
+    if (dragging || isMoving || velX !== 0) {
+      angle += velX;
+      place();
+    }
+    requestAnimationFrame(tick);
   }
   tick();
 
   // Interaction State Handling
   function onStart(e) {
     dragging = true;
+    isMoving = true;
     lastX = e.touches ? e.touches[0].clientX : e.clientX;
     lastT = performance.now();
     velX = 0;
@@ -262,12 +273,16 @@ document.addEventListener('keydown', e => {
   function onMove(e) {
     if (!dragging) return;
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
-    const dt = performance.now() - lastT || 1;
+    const now = performance.now();
+    const dt = now - lastT || 1;
     const dx = cx - lastX;
-    velX = dx / W() * 3.5; 
+    
+    // ปรับสเกลความเร็วในการลากให้เสถียรขึ้น ไม่กระตุกตามความแรงมือ
+    velX = (dx / W()) * 2.2; 
     angle += velX;
+    
     lastX = cx;
-    lastT = performance.now();
+    lastT = now;
   }
   
   function onEnd() { 
@@ -276,9 +291,8 @@ document.addEventListener('keydown', e => {
 
   // Event Bindings
   scene.addEventListener('mousedown', onStart);
-  scene.addEventListener('mousemove', onMove);
-  scene.addEventListener('mouseup', onEnd);
-  scene.addEventListener('mouseleave', onEnd);
+  window.addEventListener('mousemove', onMove); // ย้ายมาผูกกับ window เพื่อให้ลากหลุดขอบแล้วไม่ค้าง
+  window.addEventListener('mouseup', onEnd);
   scene.addEventListener('touchstart', onStart, { passive: true });
   scene.addEventListener('touchmove', onMove, { passive: true });
   scene.addEventListener('touchend', onEnd);
