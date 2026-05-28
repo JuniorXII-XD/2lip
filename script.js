@@ -165,7 +165,7 @@ document.addEventListener('keydown', e => {
 /* ── 3D Ellipse Dynamic Photos Carousel (Optimized Version) ── */
 (function() {
   const PHOTOS = [
-    { src: 'photos/photo1.jpg', caption: '🤍' },
+    { src: 'photos/photo1.png', caption: '🤍' },
     { src: 'photos/photo2.jpg', caption: '❤️' },
     { src: 'photos/photo3.jpg', caption: '🌷' },
     { src: 'photos/photo4.jpg', caption: '❤️' },
